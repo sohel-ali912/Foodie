@@ -1,0 +1,33 @@
+[
+    {
+        "id":1,
+        "name":"Double cheese Burger",
+        "price":"$200",
+        "image":"images/burger.png"
+    },
+    {
+        "id":2,
+        "name":"Veggie Pizza",
+        "price":"$10.99",
+        "image":"images/pizza.png"
+    },
+    {
+        "id":3,
+        "name":"Fried Chicken",
+        "price":"$13.45",
+        "image":"images/fried-chicken.png"
+    },
+    
+    {
+        "id":4,
+        "name":"Chicken Roll",
+        "price":"$10.20",
+        "image":"images/chicken-roll.png"
+    },
+    {
+        "id":5,
+        "name":"Spring Roll",
+        "price":"$9.31",
+        "image":"images/spring-roll.png"
+    }
+]

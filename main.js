@@ -1,0 +1,137 @@
+var swiper = new Swiper(".mySwiper", {
+  loop: true,
+  navigation: {
+    nextEl: "#next",
+    prevEl: "#prev",
+  },
+});
+
+const cartIcon = document.querySelector(".cart-icon");
+const cartTab = document.querySelector(".cart-tab");
+const closeBtn = document.querySelector(".close-btn");
+const cardList = document.querySelector(".card-list");
+const Cartlist = document.querySelector('.cart-list')
+const cartTotal = document.querySelector('.cart-total');
+
+cartIcon.addEventListener("click", () => {
+  cartTab.classList.add("cart-tab-active");
+});
+
+closeBtn.addEventListener("click", () => {
+  cartTab.classList.remove("cart-tab-active");
+});
+
+let productList = [];
+let cartProduct = [];
+
+const updateTotals = ()=>{
+    let totalPrice = 0;
+    document.querySelectorAll('.item').forEach(item =>{
+        const price = parseFloat(item.querySelector('.item-total').textContent.replace('$',''));
+        totalPrice += price;
+    });
+    cartTotal.textContent = `${totalPrice.toFixed(2)}`
+}
+
+const showCards = () => {
+  productList.forEach((product) => {
+    const orderCard = document.createElement("div");
+    orderCard.classList.add("order-cart");
+
+    orderCard.innerHTML = `
+      <div class="card-image">
+        <img src="${product.image}" alt="">
+      </div>
+      <h4>${product.name}</h4>
+      <h4 class="price">${product.price}</h4>
+      <a href="#" class="btn cart-btn">Add to Cart</a>
+    `;
+
+    cardList.appendChild(orderCard);
+
+    const cartBtn = orderCard.querySelector(".cart-btn");
+    cartBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      addToCart(product);
+    });
+  });
+};
+
+const addToCart = (product) => {
+
+  const existingProduct = cartProduct.find(item => item.id === product.id);
+  if (existingProduct) {
+
+    alert('Item already in your cart!');
+    return;
+    
+  }
+
+  cartProduct.push(product)
+
+  let quantity = 1;
+
+  let price = parseFloat(product.price.replace('$',''))
+  const cartItem = document.createElement("div");
+  cartItem.classList.add("item");
+  cartItem.innerHTML = `
+    <div class="item-image">
+    <img src=${product.image} alt="">
+    </div>
+    <div class="detail">
+    <h4>${product.name}</h4>
+    <h4 class="item-total">${product.price}</h4>
+    </div>
+    <div class="flex">
+    <a href="#" class="quantity-btn minus">
+    <i class="fa-solid fa-minus"></i>
+    </a>
+    <h4 class="quantity-value">${quantity}</h4>
+
+    <a href="#" class="quantity-btn plus">
+    <i class="fa-solid fa-plus"></i>
+    </a>
+    </div>`;
+
+    Cartlist.appendChild(cartItem)
+    updateTotals();
+    const plusBtn = cartItem.querySelector('.plus');
+    const minusBtn = cartItem.querySelector('.minus');
+    const quantityValue = cartItem.querySelector('.quantity-value')
+    const itemTotal = cartItem.querySelector('.item-total')
+    plusBtn.addEventListener('click',(e)=>{
+        e.preventDefault();
+quantity++;
+quantityValue.textContent = quantity;
+itemTotal.textContent = `$ ${(price*quantity).toFixed(2)}`
+
+updateTotals();
+    })
+    minusBtn.addEventListener('click',(e)=>{
+        e.preventDefault();
+        if(quantity > 1){
+            quantity--;
+quantityValue.textContent = quantity;
+itemTotal.textContent = ` ${(price*quantity).toFixed(2)}`;
+updateTotals();
+        }else{
+            cartItem.remove();
+            cartProduct = cartProduct.filter(item =>{
+                item.id === product.id
+            });
+            updateTotals();
+        }
+
+    })
+};
+
+const initApp = () => {
+  fetch("products.json")
+    .then((response) => response.json())
+    .then((data) => {
+      productList = data;
+      showCards();
+    });
+};
+
+initApp();
